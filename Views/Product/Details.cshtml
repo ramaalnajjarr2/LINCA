@@ -1,0 +1,331 @@
+﻿@model LINCA_v1.Models.Productsprop
+@{
+    ViewData["Title"] = Model.ProductName;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - LINCA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #eef5e9;
+            --grid: #d8e6d3;
+            --card: #ffffffcc;
+            --text: #0c1a0f;
+            --muted: #2b3b2f;
+            --primary: #a7d9a8;
+            --primaryHover: #94c996;
+            --danger: #e26d6d;
+            --shadow: 0 18px 40px rgba(0,0,0,.08);
+            --radius: 22px;
+            --greenText: #2f8a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Tageschrift', serif;
+            color: var(--text);
+            background: var(--bg);
+            background-image: radial-gradient(circle at 20% 20%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 50% 50%, rgba(167,217,168,0.1) 0%, transparent 50%), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 300px 300px, 300px 300px, 400px 400px, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(167,217,168,0.1), rgba(167,217,168,0.05));
+            animation: drift 15s infinite linear;
+            pointer-events: none;
+        }
+
+            .bg-shape:nth-child(1) {
+                width: 200px;
+                height: 200px;
+                top: 10%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .bg-shape:nth-child(2) {
+                width: 150px;
+                height: 150px;
+                top: 60%;
+                right: 15%;
+                animation-delay: -5s;
+            }
+
+            .bg-shape:nth-child(3) {
+                width: 100px;
+                height: 100px;
+                bottom: 20%;
+                left: 50%;
+                animation-delay: -10s;
+            }
+
+        @@keyframes drift {
+            0% {
+                transform: translate(0,0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(50px,-50px) rotate(90deg);
+            }
+
+            50% {
+                transform: translate(-30px,30px) rotate(180deg);
+            }
+
+            75% {
+                transform: translate(-50px,-30px) rotate(270deg);
+            }
+
+            100% {
+                transform: translate(0,0) rotate(360deg);
+            }
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 28px;
+        }
+
+        .card {
+            width: min(900px,100%);
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 28px;
+            position: relative;
+            overflow: hidden;
+            animation: cardGlow 2s ease-in-out infinite alternate;
+        }
+
+        @@keyframes cardGlow {
+            0% {
+                box-shadow: var(--shadow);
+            }
+
+            100% {
+                box-shadow: var(--shadow), var(--glow);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+            border-radius: var(--radius) var(--radius) 0 0;
+            box-shadow: 0 0 10px rgba(167,217,168,0.5);
+        }
+
+        .img-box {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,.1);
+            background: #fff;
+            height: 320px;
+        }
+
+            .img-box img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .title {
+            font-size: 32px;
+            font-weight: 900;
+            margin: 0 0 6px 0;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: 900;
+            color: #2f8a3a;
+            margin-bottom: 10px;
+        }
+
+        .desc {
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 18px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+        }
+
+            .btn-primary:hover {
+                background: var(--primaryHover);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1), var(--neonGlow);
+            }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-soft {
+            background: rgba(0,0,0,.05);
+            border: 1px solid rgba(0,0,0,.1);
+            color: var(--muted);
+        }
+
+        .add-cart-form {
+            display: flex;
+            align-items: end;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .qty-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .qty-label {
+            font-weight: 800;
+            color: #2f4f4f;
+        }
+
+        .qty-input {
+            width: 90px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid #00000020;
+            font-weight: 900;
+            background: #ffffffcc;
+        }
+
+            .qty-input::-webkit-inner-spin-button, .qty-input::-webkit-outer-spin-button {
+                opacity: 1;
+            }
+
+        @@media(max-width:900px) {
+            .card {
+                grid-template-columns: 1fr;
+            }
+
+            .img-box {
+                height: 260px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="wrap">
+        <div class="card">
+            <div class="img-box">
+                @if (!string.IsNullOrWhiteSpace(Model.imgurl))
+                {
+                    <img src="@Model.imgurl" alt="@Model.ProductName" />
+                }
+                else
+                {
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;font-weight:800;">No Image</div>
+                }
+            </div>
+            <div>
+                <h1 class="title">@Model.ProductName</h1>
+                <div class="price">@Model.Price JD</div>
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <div class="desc">@Model.Description</div>
+                }
+                <div class="actions">
+                    @if (ViewBag.IsLoggedIn && !ViewBag.IsSellerOwner && !ViewBag.IsAdmin)
+                    {
+                        <form asp-controller="Cart" asp-action="Add" method="post" class="add-cart-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@Model.ProductId" />
+                            <input type="hidden" name="marketId" value="@Model.MarketId" />
+                            <div class="qty-wrapper">
+                                <label class="qty-label">Quantity</label>
+                                <input type="number" name="quantity" class="qty-input" value="1" min="1" step="1" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">🛒 Add to Cart</button>
+                        </form>
+                    }
+                    @if (ViewBag.IsSellerOwner)
+                    {
+                        <a class="btn btn-soft" asp-action="Edit" asp-route-id="@Model.ProductId">✏️ Edit</a>
+                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.ProductId">🗑 Delete</a>
+                    }
+                    @if (ViewBag.IsAdmin)
+                    {
+                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.ProductId">🗑 Delete (Admin)</a>
+                    }
+                    <a class="btn btn-soft" asp-action="ByMarket" asp-route-marketId="@Model.MarketId">← Back to Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

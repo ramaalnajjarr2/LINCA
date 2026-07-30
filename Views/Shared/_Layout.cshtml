@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LINCA</title>
+    <script type="importmap"></script>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LINCA_v1.styles.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --bg: #eef5e9;
+            --grid: #d8e6d3;
+            --card: #ffffffcc;
+            --text: #0c1a0f;
+            --muted: #2b3b2f;
+            --primary: #a7d9a8;
+            --primaryHover: #94c996;
+            --shadow: 0 18px 40px rgba(0,0,0,.08);
+            --radius: 18px;
+            --greenText: #2f8a3a;
+        }
+
+        /* ✅ FIX SCROLL (المهم) */
+        html, body {
+            height: auto !important;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            background-color: var(--bg);
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* عشان الفوتر ما يطلع بنص الصفحة */
+        .page-wrap {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            overflow:visible;
+
+        }
+
+        /* ===== Header ===== */
+        .linca-nav {
+            background: rgba(255,255,255,.72) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,.08) !important;
+            box-shadow: 0 10px 18px rgba(0,0,0,.06);
+        }
+
+        .brand {
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: var(--greenText) !important;
+            text-shadow: 0 8px 16px rgba(0,0,0,.06);
+        }
+
+        /* ✅ ONE STYLE FOR ALL HEADER ITEMS */
+        .linca-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(0,0,0,.10);
+            background: rgba(167,217,168,.22);
+            color: var(--muted) !important;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+            white-space: nowrap;
+        }
+
+            .linca-pill:hover {
+                transform: translateY(-1px);
+                background: rgba(167,217,168,.32);
+                box-shadow: 0 10px 18px rgba(0,0,0,.06);
+                border-color: rgba(148,201,150,.95);
+            }
+
+        .linca-pill--solid {
+            background: rgba(167,217,168,.42);
+        }
+
+        .linca-pill--soft {
+            background: rgba(0,0,0,.04);
+        }
+
+        .linca-badge {
+            font-size: 12px;
+            font-weight: 900;
+            padding: 8px 12px;
+            background: rgba(255,255,255,.65);
+        }
+
+        /* زر اللوق آوت يخضع لنفس الستايل */
+        .linca-btn {
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        /* spacing */
+        .nav-gap {
+            gap: 8px;
+        }
+
+        footer.footer {
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    @{
+        var action = (ViewContext.RouteData.Values["action"]?.ToString() ?? "").ToLower();
+        var controller = (ViewContext.RouteData.Values["controller"]?.ToString() ?? "").ToLower();
+
+        bool isAuthPage =
+        controller == "Account" &&
+        (action == "Login" || action == "Register");
+    }
+    @if (isAuthPage)
+    {
+        <!-- AUTH PAGES HEADER (Login / Register / Forget Password) -->
+        <header>
+            <nav class="navbar linca-nav mb-3">
+                <div class="container-fluid justify-content-end">
+                    <ul class="navbar-nav flex-row gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link pill" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link pill" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    }
+    else
+    {
+        <!-- MAIN HEADER -->
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm linca-nav mb-3">
+                <div class="container-fluid">
+
+                    <a class="navbar-brand brand" asp-controller="Home" asp-action="University">LINCA</a>
+
+                    <button class="navbar-toggler" type="button"
+                            data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                        <!-- LEFT LINKS -->
+                        <ul class="navbar-nav flex-grow-1 gap-1">
+
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <!-- مشتركة -->
+                                <li class="nav-item">
+                                    <a class="nav-link pill" asp-controller="Market" asp-action="Shop">Stores</a>
+                                </li>
+
+                                <!-- CUSTOMER -->
+                                @if (!User.IsInRole("Seller") && !User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="SellerRequest" asp-action="Create">
+                                            Upgrade to Seller
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Cart" asp-action="Index">Cart</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Order" asp-action="MyOrder">
+                                            My Orders
+                                        </a>
+                                    </li>
+                                }
+
+                                <!-- SELLER -->
+                                @if (User.IsInRole("Seller"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Order" asp-action="StoreOrders">Dashboard</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Product" asp-action="CreateMyStore">
+                                            Add Product
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Cart" asp-action="Index">Cart</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Order" asp-action="MyOrder">
+                                            My Orders
+                                        </a>
+                                    </li>
+                                }
+
+                                <!-- ADMIN -->
+                                @if (User.IsInRole("Admin"))
+                                {
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Order" asp-action="AdminOrders">Dashboard</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Admin" asp-action="UsersPanel">
+                                            Admin Panel
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Admin" asp-action="SellerRequests">
+                                            Seller Requests
+                                        </a>
+                                    </li>
+
+                                    <!-- الأدمن ممكن يشوف Upgrade to Seller إذا حاب -->
+                                    @* <li class="nav-item">
+                                        <a class="nav-link" asp-controller="SellerRequest" asp-action="Create">
+                                            Upgrade to Seller
+                                        </a>
+                                    </li> *@
+                                }
+                            }
+                        </ul>
+
+                        <!-- RIGHT SIDE -->
+                        <ul class="navbar-nav align-items-center gap-2">
+
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <span class="role-badge">
+                                        @(User.IsInRole("Admin") ? "Admin" :
+                                                                        User.IsInRole("Seller") ? "Seller" : "Customer")
+                                    </span>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="ProfileSettings">
+                                        Profile
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                        <button type="submit" class="btn-logout">Logout</button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link pill" asp-controller="Account" asp-action="Login">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link pill" asp-controller="Account" asp-action="Register">Register</a>
+                                </li>
+                            }
+                        </ul>
+
+                    </div>
+                </div>
+            </nav>
+        </header>
+    }
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - LINCA
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

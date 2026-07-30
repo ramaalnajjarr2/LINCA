@@ -1,0 +1,329 @@
+﻿@model LINCA_v1.Models.SellerRequest
+@using LINCA_v1.Models
+
+@{
+    ViewData["Title"] = "Upgrade to Seller";
+    bool isPending = (bool)(ViewBag.HasPending ?? false);
+    var successMsg = TempData.Peek("Success") as string;
+    var errorMsg = TempData.Peek("Error") as string;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - LINCA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #eef5e9;
+            --grid: #d8e6d3;
+            --card: #ffffffcc;
+            --text: #0c1a0f;
+            --muted: #2b3b2f;
+            --primary: #a7d9a8;
+            --primaryHover: #94c996;
+            --danger: #e26d6d;
+            --shadow: 0 18px 40px rgba(0,0,0,.08);
+            --radius: 22px;
+            --greenText: #2f8a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Tageschrift', serif;
+            color: var(--text);
+            background: var(--bg);
+            background-image: radial-gradient(circle at 20% 20%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 50% 50%, rgba(167,217,168,0.1) 0%, transparent 50%), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 300px 300px, 300px 300px, 400px 400px, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(167,217,168,0.1), rgba(167,217,168,0.05));
+            animation: drift 15s infinite linear;
+            pointer-events: none;
+        }
+
+            .bg-shape:nth-child(1) {
+                width: 200px;
+                height: 200px;
+                top: 10%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .bg-shape:nth-child(2) {
+                width: 150px;
+                height: 150px;
+                top: 60%;
+                right: 15%;
+                animation-delay: -5s;
+            }
+
+            .bg-shape:nth-child(3) {
+                width: 100px;
+                height: 100px;
+                bottom: 20%;
+                left: 50%;
+                animation-delay: -10s;
+            }
+
+        @@keyframes drift {
+            0% {
+                transform: translate(0,0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(50px,-50px) rotate(90deg);
+            }
+
+            50% {
+                transform: translate(-30px,30px) rotate(180deg);
+            }
+
+            75% {
+                transform: translate(-50px,-30px) rotate(270deg);
+            }
+
+            100% {
+                transform: translate(0,0) rotate(360deg);
+            }
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 28px;
+        }
+
+        .card {
+            width: min(980px,100%);
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 42px;
+            position: relative;
+            overflow: hidden;
+            animation: cardGlow 2s ease-in-out infinite alternate;
+        }
+
+        @@keyframes cardGlow {
+            0% {
+                box-shadow: var(--shadow);
+            }
+
+            100% {
+                box-shadow: var(--shadow), var(--glow);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+            border-radius: var(--radius) var(--radius) 0 0;
+            box-shadow: 0 0 10px rgba(167,217,168,0.5);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin-bottom: 6px;
+            color: var(--greenText);
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 18px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .section {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px dashed rgba(0,0,0,.15);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-weight: 900;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        input, textarea {
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,.10);
+            padding: 12px;
+            font-weight: 700;
+        }
+
+        textarea {
+            min-height: 110px;
+        }
+
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: 0;
+            border-radius: 14px;
+            padding: 10px 16px;
+            font-weight: 900;
+            cursor: pointer;
+            color: var(--text);
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-primary:hover {
+                background: var(--primaryHover);
+                transform: translateY(-2px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.15), var(--neonGlow);
+            }
+
+        .btn-soft {
+            border: 1px solid rgba(0,0,0,.1);
+            background: rgba(167,217,168,.35);
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--muted);
+            transition: all 0.3s ease;
+        }
+
+            .btn-soft:hover {
+                background: rgba(167,217,168,.55);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1), var(--neonGlow);
+            }
+
+        @@media(max-width:1000px) {
+            .card {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="wrap">
+        <div class="card">
+            <div class="title">Seller Upgrade Request</div>
+            <div class="subtitle">A small symbolic fee (3 JOD) is required to activate the seller feature.</div>
+
+            <div class="alert alert-info" style="font-weight:800;">💳 Visa / MasterCard: 1111 3434 6464 7564<br />📱 Mobile Wallet / CliQ: 0797051281</div>
+
+            @if (!string.IsNullOrWhiteSpace(successMsg))
+            {
+                <div class="alert alert-success">@successMsg</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(errorMsg))
+            {
+                <div class="alert alert-danger">@errorMsg</div>
+            }
+
+            @if (isPending)
+            {
+                <div class="alert alert-warning" style="font-weight:800;">✅ Your request is <b>Pending</b>. Admin will review it soon.</div>
+                <div class="section">
+                    <div class="grid">
+                        <div class="field"><label>Store Name</label><input value="@Model?.StoreName" disabled /></div>
+                        <div class="field"><label>Store Image URL</label><input value="@Model?.StoreImageUrl" disabled /></div>
+                    </div>
+                    <div class="field" style="margin-top:14px;"><label>Store Description</label><textarea disabled>@Model?.StoreDescription</textarea></div>
+                    <div class="field" style="margin-top:14px;"><label>What will you sell?</label><textarea disabled>@Model?.WhatWillYouSell</textarea></div>
+                </div>
+                <div class="actions"><a class="btn-soft" asp-controller="Market" asp-action="shop">← Back to Stores</a></div>
+            }
+            else
+            {
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger" style="font-weight:800;"></div>
+                    <div class="section">
+                        <div class="grid">
+                            <div class="field"><label asp-for="StoreName"></label><input asp-for="StoreName" /></div>
+                            <div class="field"><label asp-for="StoreImageUrl"></label><input asp-for="StoreImageUrl" /></div>
+                        </div>
+                        <div class="field" style="margin-top:14px;"><label asp-for="StoreDescription"></label><textarea asp-for="StoreDescription"></textarea></div>
+                        <div class="field" style="margin-top:14px;"><label asp-for="WhatWillYouSell"></label><textarea asp-for="WhatWillYouSell"></textarea></div>
+                    </div>
+                    <div class="section">
+                        <div class="grid">
+                            <div class="field"><label asp-for="paymentImageUrl"></label><input asp-for="paymentImageUrl" /></div>
+                            <div class="field"><label asp-for="paymentDescription"></label><input asp-for="paymentDescription" /></div>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <a class="btn-soft" asp-controller="Market" asp-action="shop">← Back</a>
+                        <button type="submit" class="btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

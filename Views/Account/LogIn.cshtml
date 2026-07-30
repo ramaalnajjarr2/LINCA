@@ -1,0 +1,507 @@
+﻿@model LINCA_v1.ViewModels.LogIn
+@{
+    ViewData["Title"] = "Log In";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - LINCA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #eef5e9;
+            --grid: #d8e6d3;
+            --card: #ffffffcc;
+            --text: #0c1a0f;
+            --muted: #2b3b2f;
+            --primary: #a7d9a8;
+            --primaryHover: #94c996;
+            --danger: #e26d6d;
+            --shadow: 0 18px 40px rgba(0,0,0,.08);
+            --radius: 22px;
+            --greenText: #2f8a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Tageschrift', serif;
+            color: var(--text);
+            background: var(--bg);
+            background-image: radial-gradient(circle at 20% 20%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 50% 50%, rgba(167,217,168,0.1) 0%, transparent 50%), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 300px 300px, 300px 300px, 400px 400px, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+            overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animated Background Shapes */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(167,217,168,0.1), rgba(167,217,168,0.05));
+            animation: drift 15s infinite linear;
+            pointer-events: none;
+        }
+
+            .bg-shape:nth-child(1) {
+                width: 200px;
+                height: 200px;
+                top: 10%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .bg-shape:nth-child(2) {
+                width: 150px;
+                height: 150px;
+                top: 60%;
+                right: 15%;
+                animation-delay: -5s;
+            }
+
+            .bg-shape:nth-child(3) {
+                width: 100px;
+                height: 100px;
+                bottom: 20%;
+                left: 50%;
+                animation-delay: -10s;
+            }
+
+        @@keyframes drift {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(50px, -50px) rotate(90deg);
+            }
+
+            50% {
+                transform: translate(-30px, 30px) rotate(180deg);
+            }
+
+            75% {
+                transform: translate(-50px, -30px) rotate(270deg);
+            }
+
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
+        }
+
+        .card {
+            width: min(950px, 100%);
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.7);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 48px;
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 48px;
+            position: relative;
+            overflow: hidden;
+            animation: cardGlow 2s ease-in-out infinite alternate;
+        }
+
+        @@keyframes cardGlow {
+            0% {
+                box-shadow: var(--shadow);
+            }
+
+            100% {
+                box-shadow: var(--shadow), var(--glow);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+            border-radius: var(--radius) var(--radius) 0 0;
+            box-shadow: 0 0 10px rgba(167, 217, 168, 0.5);
+        }
+
+        .left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: slideInLeft 0.8s ease-out;
+            position: relative;
+        }
+
+        @@keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .logo {
+            width: 240px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
+            margin-bottom: 24px;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+            .logo:hover {
+                transform: scale(1.05);
+                filter: drop-shadow(0 12px 24px rgba(0,0,0,0.2)) brightness(1.1);
+            }
+
+        .headline {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 10px rgba(167, 217, 168, 0.3);
+        }
+
+        .description {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--muted);
+            max-width: 60ch;
+            font-weight: 400;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 50px;
+            background: rgba(167,217,168,0.2);
+            border: 1px solid rgba(167,217,168,0.5);
+            width: fit-content;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(167, 217, 168, 0.3);
+        }
+
+            .pill:hover {
+                background: rgba(167,217,168,0.3);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1), 0 0 20px rgba(167, 217, 168, 0.5);
+            }
+
+            .pill::before {
+                content: '✨';
+                margin-right: 8px;
+            }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px;
+            animation: slideInRight 0.8s ease-out 0.2s both;
+        }
+
+        @@keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .label {
+            font-size: 15px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .input {
+            padding: 16px 16px 16px 48px;
+            border-radius: 16px;
+            border: 2px solid rgba(0,0,0,0.1);
+            outline: none;
+            background: rgba(255,255,255,0.9);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+            .input:focus {
+                border-color: var(--accent);
+                box-shadow: var(--neonGlow), inset 0 2px 4px rgba(0,0,0,0.05);
+                transform: translateY(-2px);
+            }
+
+            .input[type="email"]::before {
+                content: '\f0e0';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--muted);
+                font-size: 16px;
+            }
+
+            .input[type="password"]::before {
+                content: '\f023';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--muted);
+                font-size: 16px;
+            }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: var(--muted);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+            .check:hover {
+                color: var(--accent);
+            }
+
+            .check input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                accent-color: var(--accent);
+                border-radius: 4px;
+                transition: all 0.3s ease;
+            }
+
+                .check input[type="checkbox"]:checked {
+                    box-shadow: 0 0 10px rgba(167, 217, 168, 0.5);
+                }
+
+        .btn {
+            width: 100%;
+            padding: 18px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 18px;
+            background: var(--primary);
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                transition: left 0.5s;
+            }
+
+            .btn:hover::before {
+                left: 100%;
+            }
+
+            .btn:hover {
+                background: var(--primaryHover);
+                transform: translateY(-3px);
+                box-shadow: 0 16px 32px rgba(0,0,0,0.15), var(--neonGlow);
+            }
+
+            .btn:active {
+                transform: translateY(0);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            }
+
+            .btn.secondary {
+                background: transparent;
+                border: 2px solid rgba(0,0,0,0.15);
+                box-shadow: none;
+                color: var(--text);
+            }
+
+                .btn.secondary:hover {
+                    border-color: var(--accent);
+                    background: rgba(167,217,168,0.1);
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 16px rgba(0,0,0,0.1), 0 0 15px rgba(167, 217, 168, 0.4);
+                }
+
+        .err {
+            color: #d32f2f;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .summary {
+            margin-bottom: 8px;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            a:hover {
+                color: var(--text);
+                text-decoration: underline;
+                text-shadow: 0 0 5px rgba(167, 217, 168, 0.5);
+            }
+
+        @@media (max-width: 850px) {
+            .card {
+                grid-template-columns: 1fr;
+                padding: 32px;
+                gap: 32px;
+            }
+
+            .headline {
+                font-size: 28px;
+            }
+
+            body {
+                overflow: auto;
+            }
+
+            .logo {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Shapes -->
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="left">
+                <img src="~/images/Linca.png" class="logo" alt="LINCA Logo" />
+                <h1 class="headline">Welcome back.</h1>
+                <p class="description">
+                    Log in to browse student-made products, manage your orders, and request a seller upgrade when you're ready.
+                </p>
+                <span class="pill">Simple • Secure • Made for Jordan</span>
+            </div>
+
+            <div class="right">
+                <form asp-action="Login" method="post">
+                    <div asp-validation-summary="All" class="err summary"></div>
+
+                    <div class="field">
+                        <span class="label">Email</span>
+                        <input asp-for="Email" class="input" type="email" />
+                        <span asp-validation-for="Email" class="err"></span>
+                    </div>
+
+                    <div class="field">
+                        <span class="label">Password</span>
+                        <input asp-for="Password" class="input" type="password" />
+                        <span asp-validation-for="Password" class="err"></span>
+                    </div>
+
+                    <div class="row">
+                        <label class="check">
+                            <input asp-for="RememberMe" type="checkbox" />
+                            Remember me
+                        </label>
+
+                        <a asp-controller="Account" asp-action="VerifyEmail">
+                            Forgot password?
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn">Log In</button>
+
+                    <button type="button" class="btn secondary"
+                            onclick="location.href='@Url.Action("Register", "Account")'">
+                        Create an account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

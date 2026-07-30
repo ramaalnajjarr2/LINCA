@@ -1,0 +1,245 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using LINCA_v1.Models
+@inject UserManager<Users> UserManager
+
+@{
+    ViewData["Title"] = "University";
+}
+
+<style>
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --danger: #e26d6d;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Tageschrift', serif;
+        color: var(--text);
+        background: var(--bg);
+        background-image: radial-gradient(circle at 20% 20%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(167,217,168,0.2) 0%, transparent 40%), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 300px 300px, 300px 300px, 40px 40px, 40px 40px;
+        background-attachment: fixed;
+    }
+
+    .hero {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+    }
+
+    .hero-card {
+        width: min(980px, 100%);
+        background: var(--card);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.7);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 54px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        animation: cardGlow 2s ease-in-out infinite alternate;
+    }
+
+    @@keyframes cardGlow {
+        0% {
+            box-shadow: var(--shadow);
+        }
+
+        100% {
+            box-shadow: var(--shadow), var(--glow);
+        }
+    }
+
+    .brand-title {
+        text-align: center;
+        font-size: 58px;
+        font-weight: 900;
+        letter-spacing: 8px;
+        margin: 0;
+        background: linear-gradient(135deg, var(--text) 0%, var(--greenText) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle, .welcome, .hint {
+        text-align: center;
+        font-weight: 700;
+    }
+
+    .brand-subtitle {
+        color: var(--muted);
+        font-size: 16px;
+    }
+
+    .welcome {
+        color: var(--greenText);
+        font-size: 18px;
+    }
+
+    .hint {
+        color: var(--text);
+        font-size: 15px;
+        opacity: 0.9;
+    }
+
+    .university-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-top: 10px;
+    }
+
+    .uni-card {
+        height: 150px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(0,0,0,.1);
+        background: var(--card);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-align: center;
+        padding: 18px;
+        transition: all 0.3s ease;
+    }
+
+        .uni-card.active {
+            border: 2px solid var(--greenText);
+            box-shadow: 0 0 0 2px rgba(148,201,150,.25), var(--shadow);
+            cursor: pointer;
+        }
+
+            .uni-card.active:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 0 0 2px rgba(148,201,150,.28), 0 22px 40px rgba(0,0,0,.12);
+            }
+
+        .uni-card.disabled {
+            opacity: 0.55;
+            filter: grayscale(100%);
+            cursor: not-allowed;
+        }
+
+    .uni-name {
+        font-size: 20px;
+        font-weight: 900;
+        color: var(--text);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        border: 1px solid rgba(0,0,0,.10);
+        background: rgba(167,217,168,.35);
+        color: var(--muted);
+        width: fit-content;
+    }
+
+    .coming {
+        font-size: 13px;
+        color: var(--muted);
+        opacity: .85;
+        font-weight: 700;
+    }
+
+    a.clean-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    @@media (max-width: 900px) {
+        .hero-card {
+            padding: 34px 20px;
+        }
+
+        .brand-title {
+            font-size: 44px;
+            letter-spacing: 6px;
+        }
+
+        .university-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .uni-card {
+            height: 140px;
+        }
+    }
+</style>
+
+<div class="hero">
+    <div class="hero-card">
+
+        <h1 class="brand-title">LINCA</h1>
+        <p class="brand-subtitle">A modern student marketplace for projects, products, and services</p>
+
+        @{
+            var currentUser = await UserManager.GetUserAsync(User);
+            var name = "";
+            if (currentUser != null)
+            {
+                name = $"{currentUser.FirstName} {currentUser.LastName}".Trim();
+                if (string.IsNullOrWhiteSpace(name))
+                    name = currentUser.UserName ?? "there";
+            }
+        }
+
+        <p class="welcome">Welcome back, @name 👋</p>
+        <p class="hint">Choose your university to continue</p>
+
+        <div class="university-grid">
+
+            <a class="clean-link" asp-controller="Market" asp-action="shop">
+                <div class="uni-card active">
+                    <div class="uni-name">Zarqa University</div>
+                    <span class="badge">Available</span>
+                </div>
+            </a>
+
+            <div class="uni-card disabled">
+                <div class="uni-name">Al-Ahliyya Amman University</div>
+                <div class="coming">Coming Soon</div>
+            </div>
+
+            <div class="uni-card disabled">
+                <div class="uni-name">Hashemite University</div>
+                <div class="coming">Coming Soon</div>
+            </div>
+
+            <div class="uni-card disabled">
+                <div class="uni-name">The University Of Jordan</div>
+                <div class="coming">Coming Soon</div>
+            </div>
+
+            <div class="uni-card disabled">
+                <div class="uni-name">Al-Zaytoonah University of Jordan</div>
+                <div class="coming">Coming Soon</div>
+            </div>
+
+            <div class="uni-card disabled">
+                <div class="uni-name">More Universities</div>
+                <div class="coming">Coming Soon</div>
+            </div>
+
+        </div>
+    </div>
+</div>

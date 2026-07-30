@@ -1,0 +1,242 @@
+﻿@model IEnumerable<LINCA_v1.Models.SellerRequest>
+@using LINCA_v1.Models
+
+@{
+    ViewData["Title"] = "Seller Upgrade Requests";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - LINCA</title>
+
+    <style>
+        :root {
+            --bg: #eef5e9;
+            --grid: #d8e6d3;
+            --card: #ffffffcc;
+            --text: #0c1a0f;
+            --muted: #2b3b2f;
+            --primary: #a7d9a8;
+            --primaryHover: #94c996;
+            --danger: #e26d6d;
+            --shadow: 0 18px 40px rgba(0,0,0,.08);
+            --radius: 22px;
+            --greenText: #2f8a3a;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Tageschrift', serif;
+            color: var(--text);
+            background-color: var(--bg);
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow: auto;
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 28px;
+            gap: 24px;
+        }
+
+        .card {
+            width: min(980px,100%);
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.55);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 24px;
+        }
+
+        .logo {
+            width: 180px;
+            filter: drop-shadow(0 10px 18px rgba(0,0,0,.10));
+            margin-bottom: 16px;
+        }
+
+        .headline {
+            font-size: 28px;
+            margin: 0 0 10px 0;
+        }
+
+        .description {
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .pill {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 12px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: rgba(167,217,168,.35);
+            border: 1px solid rgba(167,217,168,.6);
+            width: fit-content;
+        }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .box {
+            background: rgba(255,255,255,.7);
+            border: 1px solid rgba(0,0,0,.08);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,.06);
+        }
+
+            .row:last-child {
+                border-bottom: none;
+            }
+
+        .k {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .v {
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+        }
+
+            .btn.approve {
+                background: var(--primary);
+                color: #000;
+            }
+
+                .btn.approve:hover {
+                    background: var(--primaryHover);
+                    transform: translateY(-1px);
+                }
+
+            .btn.reject {
+                background: var(--danger);
+                border: 1px solid var(--dangerBorder);
+                box-shadow: none;
+            }
+
+                .btn.reject:hover {
+                    background: var(--dangerHover);
+                    transform: translateY(-1px);
+                }
+
+            .btn.secondary {
+                background: transparent;
+                border: 2px solid rgba(0,0,0,.15);
+                box-shadow: none;
+            }
+
+                .btn.secondary:hover {
+                    border-color: rgba(0,0,0,.25);
+                    background: rgba(255,255,255,.55);
+                }
+
+        @@media(max-width:850px) {
+            .card {
+                grid-template-columns: 1fr;
+                padding: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <img src="~/images/Linca.png" class="logo" alt="LINCA Logo" />
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="card">
+                <h2 class="headline">No pending seller requests</h2>
+                <p class="description">There are currently no upgrade requests to review.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var r in Model)
+            {
+                <div class="card">
+                    <div class="left">
+                        <h2 class="headline">Seller Request</h2>
+                        <p class="description">
+                            Review this request and approve or reject the upgrade.
+                        </p>
+                        <span class="pill">User ID: @r.UserId</span>
+                    </div>
+
+                    <div class="right">
+                        <div class="box">
+                            <div class="row"><div class="k">User</div><div class="v">@r.User?.Email ?? r.UserId</div></div>
+                            <div class="row"><div class="k">Store</div><div class="v">@r.StoreName</div></div>
+                            <div class="row">
+                                <div class="k">Payment Proof</div>
+                                <div class="v">
+                                    @if (!string.IsNullOrWhiteSpace(r.paymentImageUrl))
+                                    {
+                                        <a href="@r.paymentImageUrl" target="_blank">View image</a>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(r.paymentDescription))
+                                    {
+                                        <div>@r.paymentDescription</div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row"><div class="k">Extra Info</div><div class="v">@r.WhatWillYouSell ?? "—"</div></div>
+                        </div>
+
+                        <form asp-action="ApproveSellerRequest" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <button type="submit" class="btn approve">Approve</button>
+                        </form>
+
+                        <form asp-action="RejectSellerRequest" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <button type="submit" class="btn reject">Reject</button>
+                        </form>
+
+                        <button type="button" class="btn secondary"
+                                onclick="location.href='@Url.Action("Index", "Admin")'">
+                            Back
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>

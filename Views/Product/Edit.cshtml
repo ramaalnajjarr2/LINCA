@@ -1,0 +1,296 @@
+﻿@model LINCA_v1.Models.Productsprop
+@{
+    ViewData["Title"] = Model.ProductName;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - LINCA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #eef5e9;
+            --grid: #d8e6d3;
+            --card: #ffffffcc;
+            --text: #0c1a0f;
+            --muted: #2b3b2f;
+            --primary: #a7d9a8;
+            --primaryHover: #94c996;
+            --danger: #e26d6d;
+            --shadow: 0 18px 40px rgba(0,0,0,.08);
+            --radius: 22px;
+            --greenText: #2f8a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Tageschrift', serif;
+            color: var(--text);
+            background: var(--bg);
+            background-image: radial-gradient(circle at 20% 20%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(167,217,168,0.2) 0%, transparent 40%), radial-gradient(circle at 50% 50%, rgba(167,217,168,0.1) 0%, transparent 50%), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 300px 300px, 300px 300px, 400px 400px, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(167,217,168,0.1), rgba(167,217,168,0.05));
+            animation: drift 15s infinite linear;
+            pointer-events: none;
+        }
+
+            .bg-shape:nth-child(1) {
+                width: 200px;
+                height: 200px;
+                top: 10%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .bg-shape:nth-child(2) {
+                width: 150px;
+                height: 150px;
+                top: 60%;
+                right: 15%;
+                animation-delay: -5s;
+            }
+
+            .bg-shape:nth-child(3) {
+                width: 100px;
+                height: 100px;
+                bottom: 20%;
+                left: 50%;
+                animation-delay: -10s;
+            }
+
+        @@keyframes drift {
+            0% {
+                transform: translate(0,0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(50px,-50px) rotate(90deg);
+            }
+
+            50% {
+                transform: translate(-30px,30px) rotate(180deg);
+            }
+
+            75% {
+                transform: translate(-50px,-30px) rotate(270deg);
+            }
+
+            100% {
+                transform: translate(0,0) rotate(360deg);
+            }
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 28px;
+        }
+
+        .card {
+            width: min(820px,100%);
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 42px;
+            position: relative;
+            overflow: hidden;
+            animation: cardGlow 2s ease-in-out infinite alternate;
+        }
+
+        @@keyframes cardGlow {
+            0% {
+                box-shadow: var(--shadow);
+            }
+
+            100% {
+                box-shadow: var(--shadow), var(--glow);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+            border-radius: var(--radius) var(--radius) 0 0;
+            box-shadow: 0 0 10px rgba(167,217,168,0.5);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin: 0 0 6px 0;
+            color: var(--greenText);
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin: 0 0 18px 0;
+            color: var(--muted);
+            font-weight: 800;
+            opacity: .9;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        label {
+            font-weight: 900;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        input, textarea {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,.10);
+            padding: 12px;
+            outline: none;
+            background: rgba(255,255,255,.8);
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-soft {
+            border: 1px solid rgba(0,0,0,.10);
+            background: rgba(167,217,168,.35);
+            font-weight: 900;
+            padding: 10px 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: var(--muted);
+            transition: all 0.3s ease;
+        }
+
+            .btn-soft:hover {
+                background: rgba(167,217,168,.55);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1), var(--neonGlow);
+            }
+
+        .btn-primary {
+            border: 0;
+            background: var(--primary);
+            font-weight: 900;
+            padding: 10px 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            color: var(--text);
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-primary:hover {
+                background: var(--primaryHover);
+                transform: translateY(-2px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.15), var(--neonGlow);
+            }
+
+        @@media(max-width:900px) {
+            .card {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="wrap">
+        <div class="card">
+            <h1 class="title">Edit Product</h1>
+            <p class="subtitle">Update the details below</p>
+            <form asp-action="Edit" asp-route-id="@Model.ProductId" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ProductId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger" style="font-weight:800;"></div>
+                <div class="field">
+                    <label asp-for="ProductName"></label>
+                    <input asp-for="ProductName" />
+                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Price"></label>
+                    <input asp-for="Price" type="number" step="0.01" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="imgurl"></label>
+                    <input asp-for="imgurl" />
+                    <span asp-validation-for="imgurl" class="text-danger"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="actions">
+                    <a class="btn-soft" asp-action="ByMarket" asp-route-marketId="@ViewBag.MarketId">← Back</a>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+﻿@model List<LINCA_v1.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+    var marketNames = ViewBag.MarketNames as Dictionary<int, string> ?? new();
+}
+
+<style>
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --danger: #e26d6d;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        background-image: radial-gradient(circle at 20% 20%, rgba(167,217,168,.2) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(167,217,168,.2) 0%, transparent 40%), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 300px 300px, 300px 300px, 40px 40px, 40px 40px;
+        background-attachment: fixed;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+    }
+
+    .card {
+        width: min(1000px,100%);
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow), var(--glow);
+        padding: 48px;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 42px;
+        font-weight: 900;
+        margin-bottom: 6px;
+        background: linear-gradient(135deg, var(--text), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+        text-align: center;
+        margin-bottom: 28px;
+        color: var(--muted);
+        font-weight: 600;
+        opacity: .9;
+    }
+
+    .alert {
+        border-radius: 14px;
+        font-weight: 800;
+        padding: 12px 16px;
+        margin-bottom: 14px;
+        background: rgba(167,217,168,.25);
+        border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .order {
+        margin-top: 18px;
+        padding: 22px;
+        border-radius: 18px;
+        background: rgba(255,255,255,.88);
+        border: 1px solid rgba(0,0,0,.08);
+        box-shadow: 0 12px 24px rgba(0,0,0,.08);
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+        background: rgba(167,217,168,.35);
+        border: 1px solid rgba(0,0,0,.1);
+        color: var(--muted);
+    }
+
+    .status {
+        font-weight: 900;
+        color: var(--accent);
+    }
+
+    .items {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.9);
+        border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .muted {
+        color: var(--muted);
+        font-weight: 700;
+        opacity: .9;
+    }
+
+    .danger-btn {
+        border-radius: 14px;
+        padding: 8px 14px;
+        font-weight: 900;
+        border: 1px solid rgba(0,0,0,.1);
+        background: var(--danger);
+        color: #7a0c0c;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+        .danger-btn:hover {
+            background: rgba(255,77,79,.35);
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="wrap">
+    <div class="card">
+
+        <div class="title">My Orders</div>
+        <div class="subtitle">
+            Track your requests & status. You can delete an order if it’s not completed.
+        </div>
+
+        @if (TempData["CartSuccess"] != null)
+        {
+            <div class="alert">@TempData["CartSuccess"]</div>
+        }
+        @if (TempData["CartError"] != null)
+        {
+            <div class="alert" style="background:rgba(255,77,79,.2)">
+                @TempData["CartError"]
+            </div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert">No orders yet. Start shopping!</div>
+        }
+        else
+        {
+            foreach (var o in Model)
+            {
+                var marketName = marketNames.ContainsKey(o.MarketId)
+                ? marketNames[o.MarketId]
+                : $"Market #{o.MarketId}";
+
+                <div class="order">
+                    <div class="row">
+                        <div>
+                            <div style="font-weight:900;">Store: @marketName</div>
+                            <div class="muted">
+                                Date: @o.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <span class="badge">Total: @o.TotalPrice JD</span>
+                            <span class="status">@o.Status</span>
+
+                            @if (o.Status != LINCA_v1.Models.OrderStatus.Completed)
+                            {
+                                <form asp-controller="Order"
+                                      asp-action="Delete"
+                                      method="post"
+                                      class="m-0">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@o.Id" />
+                                    <button type="submit" class="danger-btn">
+                                        🧺 Delete
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(o.Note))
+                    {
+                        <div class="muted" style="margin-top:10px;">
+                            Note: @o.Note
+                        </div>
+                    }
+
+                    <div class="items">
+                        @foreach (var it in o.Items)
+                        {
+                            var name = it.Product?.ProductName ?? $"Product #{it.ProductId}";
+                            <div class="item">
+                                <div style="font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                    @name
+                                </div>
+                                <div class="muted">
+                                    @it.Price JD × @it.Quantity
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

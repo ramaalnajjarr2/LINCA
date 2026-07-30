@@ -1,0 +1,137 @@
+﻿@model LINCA_v1.ViewModels.VerifyEmail
+@{
+    ViewData["Title"] = "Forgot Password";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - LINCA</title>
+
+    <style>
+        :root {
+            --bg: #eef5e9;
+            --grid: #d8e6d3;
+            --card: #ffffffcc;
+            --text: #0c1a0f;
+            --muted: #2b3b2f;
+            --primary: #a7d9a8;
+            --primaryHover: #94c996;
+            --danger: #e26d6d;
+            --shadow: 0 18px 40px rgba(0,0,0,.08);
+            --radius: 22px;
+            --greenText: #2f8a3a;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: min(760px, 100%);
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 42px;
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 36px;
+        }
+
+        .left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 14px;
+        }
+
+            .left img {
+                width: 220px;
+                filter: drop-shadow(0 10px 18px rgba(0,0,0,.10));
+            }
+
+            .left h1 {
+                margin: 0;
+                font-size: 28px;
+                font-weight: 900;
+            }
+
+            .left p {
+                margin: 0;
+                color: var(--muted);
+                font-size: 16px;
+            }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            justify-content: center;
+        }
+
+        input.input {
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        span.field-validation-error {
+            font-size: 13px;
+            color: #b00020;
+        }
+
+        button.btn {
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .12s ease, transform .12s ease;
+        }
+
+            button.btn:hover {
+                background: var(--primaryHover);
+                transform: translateY(-1px);
+            }
+
+        @@media(max-width:850px) {
+            .card {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="left">
+            <img src="~/images/Linca.png" alt="LINCA Logo" />
+            <h1>Forgot your password?</h1>
+            <p>Enter your email and we’ll send you a reset link.</p>
+        </div>
+
+        <form asp-action="VerifyEmail" method="post">
+            <div asp-validation-summary="All" style="color:#b00020"></div>
+            <input asp-for="Email" class="input" placeholder="Email address" />
+            <span asp-validation-for="Email"></span>
+            <button type="submit" class="btn">Send Reset Link</button>
+        </form>
+    </div>
+
+    @section Scripts{
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

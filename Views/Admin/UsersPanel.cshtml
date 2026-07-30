@@ -1,0 +1,215 @@
+﻿@model IEnumerable<LINCA_v1.ViewModels.UserRole>
+@{
+    ViewData["Title"] = "Users Management";
+    var successMsg = TempData["Success"] as string;
+    var errorMsg = TempData["Error"] as string;
+    var total = Model?.Count() ?? 0;
+}
+
+<style>
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --danger: #e26d6d;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Tageschrift', serif;
+        background-color: var(--bg);
+    }
+
+    .wrap {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 28px;
+    }
+
+    .card {
+        width: min(1100px, 100%);
+        background: var(--card);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 36px;
+    }
+
+    .title {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--green);
+        text-align: center;
+        margin-bottom: 6px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 18px;
+        opacity: .9;
+    }
+
+    .msg {
+        margin: 14px 0;
+        padding: 12px 14px;
+        border-radius: 14px;
+        font-weight: 800;
+    }
+
+    .msg-success {
+        background: rgba(47,138,58,.12);
+        border: 1px solid rgba(47,138,58,.18);
+        color: var(--green);
+    }
+
+    .msg-error {
+        background: rgba(220,53,69,.10);
+        border: 1px solid rgba(220,53,69,.18);
+        color: #b02a37;
+    }
+
+    .user-card {
+        background: rgba(255,255,255,.7);
+        border-radius: 18px;
+        border: 1px solid rgba(0,0,0,.08);
+        padding: 18px 22px;
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .user-info span {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+    .badge-role {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(47,138,58,.12);
+        color: var(--green);
+        font-weight: 900;
+        font-size: 12px;
+        border: 1px solid rgba(47,138,58,.18);
+    }
+
+    .controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    select {
+        border-radius: 14px;
+        border: 1px solid rgba(0,0,0,.10);
+        padding: 10px 12px;
+        background: rgba(255,255,255,.85);
+        font-weight: 800;
+        outline: none;
+    }
+
+    .btnx {
+        border-radius: 14px;
+        border: 1px solid rgba(0,0,0,.10);
+        padding: 10px 14px;
+        font-weight: 900;
+        cursor: pointer;
+        background: var(--primary);
+        color: #000;
+        transition: .15s ease;
+    }
+
+        .btnx:hover {
+            background: var(--primaryHover);
+        }
+
+    .empty {
+        text-align: center;
+        padding: 28px 10px;
+        font-weight: 800;
+        color: var(--muted);
+    }
+
+    @@media(max-width: 900px) {
+        .controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        select, .btnx {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="wrap">
+    <div class="card">
+        <div class="title">Users Management</div>
+        <div class="subtitle">Manage roles of all users directly from here</div>
+
+        @if (!string.IsNullOrWhiteSpace(successMsg))
+        {
+            <div class="msg msg-success">✅ @successMsg</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(errorMsg))
+        {
+            <div class="msg msg-error">⚠️ @errorMsg</div>
+        }
+
+        @if (total == 0)
+        {
+            <div class="empty">
+                <h2>No Users Yet</h2>
+                <p>Check back later</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var u in Model)
+            {
+                var currentRole = (u.Roles != null && u.Roles.Any()) ? string.Join(", ", u.Roles) : "None";
+
+                <div class="user-card">
+                    <div class="user-info">
+                        <div><b>@u.Email</b></div>
+                        <span>@u.UserName</span>
+                        <span class="badge-role">@currentRole</span>
+                    </div>
+
+                    <form asp-action="SetUserRole" method="post" class="controls">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@u.UserId" />
+
+                        <select name="role">
+                            @foreach (var r in u.AllRoles)
+                            {
+                                <option value="@r" selected="@(r == u.SelectedRole)">@r</option>
+                            }
+                        </select>
+
+                        <button type="submit" class="btnx">Change</button>
+                    </form>
+                </div>
+            }
+        }
+    </div>
+</div>

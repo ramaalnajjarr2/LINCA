@@ -1,0 +1,209 @@
+﻿@model List<LINCA_v1.Models.Marketprop>
+
+@using Microsoft.AspNetCore.Identity
+@using LINCA_v1.Models
+@inject UserManager<Users> UserManager
+
+@{
+    ViewData["Title"] = "Campus Shops";
+}
+
+<style>
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--text);
+        background-color: var(--bg);
+        background-image:
+            linear-gradient(var(--grid) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    .hero {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+    }
+
+    .hero-card {
+        width: min(980px, 100%);
+        background: var(--card);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,.55);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 54px;
+    }
+
+    .brand-title {
+        text-align: center;
+        font-size: 58px;
+        font-weight: 900;
+        letter-spacing: 8px;
+        margin: 0 0 10px 0;
+        color: var(--greenText);
+    }
+
+    .brand-subtitle {
+        text-align: center;
+        margin: 0 0 22px 0;
+        font-size: 16px;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .welcome {
+        text-align: center;
+        margin-bottom: 8px;
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--greenText);
+    }
+
+    .hint {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        opacity: .9;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .card-item {
+        border-radius: 18px;
+        border: 1px solid rgba(0,0,0,.10);
+        background: rgba(255,255,255,.75);
+        box-shadow: 0 10px 18px rgba(0,0,0,.06);
+        padding: 20px;
+        text-align: center;
+        transition: .15s ease;
+    }
+
+    .card-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 22px 40px rgba(0,0,0,.12);
+        border-color: rgba(148,201,150,.9);
+    }
+
+    .shop-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 18px;
+        object-fit: cover;
+        border: 2px solid rgba(148,201,150,.7);
+        margin-bottom: 10px;
+        background: white;
+    }
+
+    .title {
+        font-size: 20px;
+        font-weight: 900;
+        margin-bottom: 6px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        background: rgba(167,217,168,.35);
+        color: var(--muted);
+        margin-bottom: 6px;
+    }
+
+    .meta {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 700;
+        opacity: .85;
+    }
+
+    a.clean-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    @@media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; }
+        .hero-card { padding: 32px 20px; }
+        .brand-title { font-size: 44px; }
+    }
+</style>
+
+<div class="hero">
+    <div class="hero-card">
+        <h1 class="brand-title">LINCA</h1>
+        <p class="brand-subtitle">
+            Discover small projects and shops inside Zarqa University
+        </p>
+
+        @{
+            var currentUser = await UserManager.GetUserAsync(User);
+            var name = currentUser != null
+            ? $"{currentUser.FirstName} {currentUser.LastName}".Trim()
+            : "there";
+        }
+
+        <p class="welcome">Welcome back, @name 👋</p>
+        <p class="hint">Choose a shop to continue</p>
+
+        <div class="grid">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var s in Model)
+                {
+                    <a class="clean-link"
+                       asp-controller="Product"
+                       asp-action="ByMarket"
+                       asp-route-MarketId="@s.Id">
+
+                        <div class="card-item">
+                            <img class="shop-img"
+                                 src="@(string.IsNullOrWhiteSpace(s.imgurl)
+                                                                      ? "/images/default-store.png"
+                                                                      : s.imgurl)" />
+
+                            <div class="title">@s.Name</div>
+                            <div class="badge">Available</div>
+
+                            <div class="meta">
+                                Zarqa University •
+                                @(string.IsNullOrWhiteSpace(s.Description) ? "Shop" : s.Description)
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <div class="card-item">
+                    <div class="title">No Stores Yet</div>
+                    <div class="meta">Coming Soon</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

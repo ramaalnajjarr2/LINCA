@@ -1,0 +1,196 @@
+﻿@model LINCA_v1.Models.Productsprop
+@{
+    ViewData["Title"] = "Approve Product";
+}
+
+<style>
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --danger: #e26d6d;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Tageschrift', serif;
+        background-color: var(--bg);
+        color: var(--text);
+        background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+    }
+
+    .hero-card {
+        width: min(980px, 100%);
+        background: var(--card);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,.55);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 42px;
+        display: grid;
+        grid-template-columns: 1.1fr .9fr;
+        gap: 36px;
+    }
+
+    .logo {
+        width: 220px;
+        filter: drop-shadow(0 10px 18px rgba(0,0,0,.10));
+        margin-bottom: 18px;
+    }
+
+    .headline {
+        font-size: 32px;
+        font-weight: 900;
+        margin: 0 0 10px 0;
+        color: var(--text);
+    }
+
+    .description {
+        font-size: 16px;
+        line-height: 1.75;
+        color: var(--muted);
+        max-width: 60ch;
+    }
+
+    .pill {
+        display: inline-block;
+        margin-top: 14px;
+        font-size: 13px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(167,217,168,.35);
+        border: 1px solid rgba(167,217,168,.6);
+        width: fit-content;
+    }
+
+    .right {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .box {
+        background: rgba(255,255,255,.7);
+        border: 1px solid rgba(0,0,0,.08);
+        border-radius: 16px;
+        padding: 18px;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(0,0,0,.06);
+        font-weight: 700;
+    }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+    .k {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .v {
+        font-size: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 14px 18px;
+        font-size: 16px;
+        font-weight: 900;
+        border: none;
+        border-radius: 16px;
+        background: var(--primary);
+        cursor: pointer;
+        transition: all .12s ease;
+        box-shadow: 0 10px 18px rgba(0,0,0,.08);
+    }
+
+        .btn:hover {
+            background: var(--primaryHover);
+            transform: translateY(-1px);
+        }
+
+        .btn.secondary {
+            background: transparent;
+            border: 2px solid rgba(0,0,0,.15);
+            color: var(--muted);
+            box-shadow: none;
+        }
+
+            .btn.secondary:hover {
+                border-color: rgba(0,0,0,.25);
+                background: rgba(255,255,255,.55);
+            }
+
+    .err {
+        color: #b00020;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    @@media(max-width:850px) {
+        .hero-card {
+            grid-template-columns: 1fr;
+            padding: 28px;
+        }
+    }
+</style>
+
+<div class="hero">
+    <div class="hero-card">
+
+        <div class="left">
+            <img src="~/images/Linca.png" class="logo" alt="LINCA Logo" />
+            <div class="headline">Approve Product</div>
+            <p class="description">Confirm that this product matches your rules, then approve it to publish.</p>
+            <span class="pill">Admin action • Permanent effect</span>
+        </div>
+
+        <div class="right">
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="err">@ViewBag.ErrorMessage</div>
+            }
+
+            <div class="box">
+                <div class="row"><div class="k">Product ID</div><div class="v">@Model.ProductId</div></div>
+                <div class="row"><div class="k">Name</div><div class="v">@Model.ProductName</div></div>
+                <div class="row"><div class="k">Price</div><div class="v">@Model.Price</div></div>
+                <div class="row"><div class="k">Status</div><div class="v">@Model.Status</div></div>
+            </div>
+
+            <form asp-action="Approve" method="post">
+                <input type="hidden" name="ProductId" value="@Model.ProductId" />
+                <button type="submit" class="btn">Approve</button>
+            </form>
+
+            <button type="button" class="btn secondary"
+                    onclick="location.href='@Url.Action("PendingProducts", "Admin")'">
+                Back
+            </button>
+        </div>
+
+    </div>
+</div>

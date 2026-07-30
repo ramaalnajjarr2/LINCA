@@ -1,0 +1,236 @@
+﻿@model IEnumerable<LINCA_v1.Models.Productsprop>
+@{
+    ViewData["Title"] = "Pending Products";
+}
+
+<style>
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --danger: #e26d6d;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Tageschrift', serif;
+        color: var(--text);
+        background-color: var(--bg);
+        background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    .wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+    }
+
+    .card {
+        width: min(1100px,100%);
+        background: var(--card);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,.55);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 42px;
+        display: grid;
+        gap: 18px;
+    }
+
+    .top {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .logo {
+        width: 170px;
+        filter: drop-shadow(0 10px 18px rgba(0,0,0,.10));
+    }
+
+    .headline {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 900;
+    }
+
+    .description {
+        margin: 6px 0 0 0;
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 70ch;
+    }
+
+    .pill {
+        display: inline-block;
+        margin-top: 12px;
+        font-size: 13px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(167,217,168,.35);
+        border: 1px solid rgba(167,217,168,.6);
+        width: fit-content;
+    }
+
+    .tableWrap {
+        overflow: auto;
+        border-radius: 16px;
+        border: 1px solid rgba(0,0,0,.08);
+        background: rgba(255,255,255,.6);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 880px;
+    }
+
+    th, td {
+        padding: 14px;
+        text-align: left;
+        border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+
+    th {
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+
+    td {
+        font-size: 15px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        background: rgba(0,0,0,.06);
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 14px;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        box-shadow: 0 10px 18px rgba(0,0,0,.08);
+        transition: all .12s ease;
+    }
+
+        .btn.approve {
+            background: var(--primary);
+            color: #000;
+        }
+
+            .btn.approve:hover {
+                background: var(--primaryHover);
+                transform: translateY(-1px);
+            }
+
+        .btn.reject {
+            background: var(--danger);
+            border: 1px solid var(--dangerBorder);
+            box-shadow: none;
+        }
+
+            .btn.reject:hover {
+                background: var(--dangerHover);
+                transform: translateY(-1px);
+            }
+
+    .empty {
+        padding: 18px;
+        color: var(--muted);
+        text-align: center;
+        font-weight: 700;
+    }
+
+    @@media(max-width:850px) {
+        .card {
+            padding: 28px;
+        }
+
+        .headline {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="wrap">
+    <div class="card">
+        <div class="top">
+            <div>
+                <img src="~/images/Linca.png" class="logo" alt="LINCA Logo" />
+                <h1 class="headline">Pending Products</h1>
+                <p class="description">
+                    Review submitted products and approve or reject them. Approved items will appear in the marketplace.
+                </p>
+                <span class="pill">Admin Panel • Safe review</span>
+            </div>
+        </div>
+
+        <div class="tableWrap">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="empty">No pending products right now.</div>
+            }
+            else
+            {
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th style="width:220px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>@p.ProductId</td>
+                                <td>@p.ProductName</td>
+                                <td>@p.Price</td>
+                                <td><span class="badge">@p.Status</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn approve"
+                                                onclick="location.href='@Url.Action("Approve", "Admin", new { id = p.ProductId })'">
+                                            Approve
+                                        </button>
+                                        <button class="btn reject"
+                                                onclick="location.href='@Url.Action("Reject", "Admin", new { id = p.ProductId })'">
+                                            Reject
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

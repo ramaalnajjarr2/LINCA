@@ -1,0 +1,278 @@
+﻿@model List<LINCA_v1.Models.Order>
+@using LINCA_v1.Models
+
+@{
+    ViewData["Title"] = "Review Of Orders";
+    var marketNames = ViewBag.MarketNames as Dictionary<int, string> ?? new();
+    string MarketName(int id) => marketNames.ContainsKey(id) ? marketNames[id] : $"Market #{id}";
+}
+
+<style>
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --danger: #e26d6d;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        background-image: radial-gradient(circle at 20% 20%, rgba(167,217,168,.2) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(167,217,168,.2) 0%, transparent 40%), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 300px 300px, 300px 300px, 40px 40px, 40px 40px;
+        background-attachment: fixed;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .wrap {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding: 32px;
+    }
+
+    .card {
+        width: min(1100px,100%);
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow), var(--glow);
+        padding: 48px;
+    }
+
+    .title {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--green);
+        text-align: center;
+        margin-bottom: 6px;
+    }
+
+    .subtitle {
+        text-align: center;
+        margin-bottom: 28px;
+        color: var(--muted);
+        font-weight: 600;
+    }
+
+    .order {
+        margin-top: 18px;
+        padding: 22px;
+        border-radius: 18px;
+        background: rgba(255,255,255,.85);
+        border: 1px solid rgba(0,0,0,.08);
+        box-shadow: 0 12px 24px rgba(0,0,0,.08);
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .meta {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 700;
+    }
+
+    .badge {
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+        border: 1px solid rgba(0,0,0,.1);
+    }
+
+    .b-pending {
+        background: var(--pending);
+    }
+
+    .b-accepted {
+        background: var(--accepted);
+    }
+
+    .b-completed {
+        background: var(--completed);
+    }
+
+    .b-rejected {
+        background: var(--rejected);
+    }
+
+    .total {
+        font-size: 18px;
+        font-weight: 900;
+        color: var(--accent);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 14px;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px dashed rgba(0,0,0,.15);
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    th {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    .prod {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+        .prod img {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid rgba(0,0,0,.1);
+        }
+
+    .infoGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .infoBox {
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.9);
+        border: 1px solid rgba(0,0,0,.08);
+    }
+
+        .infoBox .k {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 900;
+        }
+
+        .infoBox .v {
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 4px;
+            word-break: break-word;
+        }
+
+    .empty {
+        text-align: center;
+        padding: 40px 10px;
+        font-weight: 900;
+        color: var(--muted);
+    }
+</style>
+
+<div class="wrap">
+
+    <div class="card">
+
+        <div class="title">Review of Orders</div>
+        <div class="subtitle">All orders in the system (read-only)</div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="empty">🧾 No orders found</div>
+        }
+        else
+        {
+            foreach (var o in Model)
+            {
+                string badgeClass = o.Status switch
+                {
+                    OrderStatus.Pending => "b-pending",
+                    OrderStatus.Accepted => "b-accepted",
+                    OrderStatus.Completed => "b-completed",
+                    OrderStatus.Rejected => "b-rejected",
+                    _ => "b-pending"
+                };
+
+                <div class="order">
+                    <div class="row">
+                        <div>
+                            <div style="font-weight:900;">Order #@o.Id </div>
+                            <div class="meta">
+                                Store: @MarketName(o.MarketId) • @o.CreatedAt.ToLocalTime()
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <span style="font-weight:900;" @badgeClass">@o.Status</span>
+                            <span class="total">@o.TotalPrice.ToString("0.00") JD</span>
+                        </div>
+                    </div>
+
+                    <div class="infoGrid">
+                        <div class="infoBox">
+                            <div class="k">Delivery</div>
+                            <div class="v">
+                                Phone1: @(string.IsNullOrWhiteSpace(o.Phone1) ? "-" : o.Phone1)<br />
+                                Phone2: @(string.IsNullOrWhiteSpace(o.Phone2) ? "-" : o.Phone2)<br />
+                                Address: @(string.IsNullOrWhiteSpace(o.Address) ? "-" : o.Address)
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(o.Note))
+                        {
+                            <div class="infoBox">
+                                <div class="k">Note</div>
+                                <div class="v">@o.Note</div>
+                            </div>
+                        }
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th width="80">Qty</th>
+                                <th width="120">Price</th>
+                                <th width="140">Line Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in o.Items)
+                            {
+                                var name = it.Product?.ProductName ?? $"Product #{it.ProductId}";
+                                var img = it.Product?.imgurl;
+
+                                <tr>
+                                    <td>
+                                        <div class="prod">
+                                            @if (!string.IsNullOrWhiteSpace(img))
+                                            {
+                                                <img src="@img" />
+                                            }
+                                            <div>@name</div>
+                                        </div>
+                                    </td>
+                                    <td>@it.Quantity</td>
+                                    <td>@it.Price.ToString("0.00") JD</td>
+                                    <td>@((it.Price * it.Quantity).ToString("0.00")) JD</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    </div>
+</div>

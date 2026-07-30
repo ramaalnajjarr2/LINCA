@@ -1,0 +1,316 @@
+﻿
+
+@model List<LINCA_v1.Models.Order>
+@using LINCA_v1.Models
+
+@{
+    ViewData["Title"] = "Store Orders";
+    var marketName = ViewBag.MarketName as string ?? "My Store";
+}
+
+<style>
+
+
+    :root {
+        --bg: #eef5e9;
+        --grid: #d8e6d3;
+        --card: #ffffffcc;
+        --text: #0c1a0f;
+        --muted: #2b3b2f;
+        --primary: #a7d9a8;
+        --primaryHover: #94c996;
+        --danger: #e26d6d;
+        --shadow: 0 18px 40px rgba(0,0,0,.08);
+        --radius: 22px;
+        --greenText: #2f8a3a;
+    }
+
+    body {
+        background: var(--bg);
+        background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    .wrap {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        justify-content: center;
+        padding: 28px;
+    }
+
+    .card {
+        width: min(1050px,100%);
+        background: var(--card);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,.55);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 42px;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 42px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        margin: 0 0 6px;
+        color: var(--greenText);
+    }
+
+    .subtitle {
+        text-align: center;
+        margin: 0 0 22px;
+        color: var(--muted);
+        font-weight: 700;
+        opacity: .9;
+    }
+
+    .alert {
+        border-radius: 14px;
+        font-weight: 800;
+        margin: 14px 0;
+        padding: 12px 14px;
+    }
+
+    .alert-success {
+        background: rgba(167,217,168,.35);
+        border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .alert-danger {
+        background: rgba(226,109,109,.18);
+        border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .order {
+        border: 1px solid rgba(0,0,0,.10);
+        background: rgba(255,255,255,.75);
+        border-radius: 16px;
+        padding: 18px;
+        margin-top: 14px;
+        box-shadow: 0 10px 18px rgba(0,0,0,.06);
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 900;
+        border: 1px solid rgba(0,0,0,.10);
+    }
+
+    .b-pending {
+        background: rgba(243,211,108,.35);
+    }
+
+    .b-accepted {
+        background: rgba(167,217,168,.35);
+    }
+
+    .b-completed {
+        background: rgba(167,217,168,.55);
+    }
+
+    .b-rejected {
+        background: rgba(226,109,109,.25);
+    }
+
+    .meta {
+        color: var(--muted);
+        font-weight: 800;
+        font-size: 13px;
+        opacity: .9;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px dashed rgba(0,0,0,.15);
+        font-weight: 800;
+    }
+
+    th {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    .prod {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+        .prod img {
+            width: 54px;
+            height: 54px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,.10);
+        }
+
+    .total {
+        font-size: 18px;
+        font-weight: 900;
+        color: var(--greenText);
+    }
+
+    .empty {
+        text-align: center;
+        padding: 35px 10px;
+        font-weight: 900;
+        color: var(--muted);
+    }
+
+    .status-select {
+        border: 1px solid rgba(0,0,0,.10);
+        background: rgba(255,255,255,.85);
+        border-radius: 14px;
+        padding: 8px 12px;
+        font-weight: 900;
+        color: var(--text);
+        outline: none;
+    }
+
+    .btn {
+        border: 0;
+        background: var(--primary);
+        font-weight: 900;
+        padding: 9px 14px;
+        border-radius: 14px;
+        cursor: pointer;
+        color: var(--text);
+        transition: .15s ease;
+    }
+
+        .btn:hover {
+            background: var(--primaryHover);
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+</style>
+
+<div class="wrap">
+    <div class="card">
+        <div class="title">Store Orders</div>
+        <div class="subtitle">@marketName • Manage orders status</div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="empty">No orders yet.</div>
+        }
+        else
+        {
+            foreach (var o in Model)
+            {
+                string badgeClass = o.Status switch
+                {
+                    OrderStatus.Pending => "b-pending",
+                    OrderStatus.Accepted => "b-accepted",
+                    OrderStatus.Completed => "b-completed",
+                    OrderStatus.Rejected => "b-rejected",
+                    _ => "b-pending"
+                };
+
+                <div class="order">
+                    <div class="row">
+                        <div>
+                            <div class="meta"> @o.CreatedAt.ToLocalTime()</div>
+                        </div>
+
+                        <div class="row">
+                            <span class="badge @badgeClass">@o.Status</span>
+                            <span class="total">@o.TotalPrice.ToString("0.00") JD</span>
+
+                            <form asp-controller="Order" asp-action="SetStatus" method="post" class="m-0" style="display:flex; gap:8px; align-items:center;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@o.Id" />
+
+                                <select name="status" class="status-select" @(o.Status == OrderStatus.Completed ? "disabled" : "")>
+                                    <option value="@OrderStatus.Pending" selected="@(o.Status == OrderStatus.Pending)">Pending</option>
+                                    <option value="@OrderStatus.Accepted" selected="@(o.Status == OrderStatus.Accepted)">Accepted</option>
+                                    <option value="@OrderStatus.Rejected" selected="@(o.Status == OrderStatus.Rejected)">Rejected</option>
+                                    <option value="@OrderStatus.Completed" selected="@(o.Status == OrderStatus.Completed)">Completed</option>
+                                </select>
+
+                                <button type="submit" class="btn" @(o.Status == OrderStatus.Completed ? "disabled" : "")>Save</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(o.Note))
+                    {
+                        <div class="meta" style="margin-top:10px;">📝 Note: @o.Note</div>
+                    }
+
+                    @* ✅ NEW: Delivery Info (بدون ما نلغي أي شي) *@
+                    <div class="meta" style="margin-top:10px;">
+                        📦 Delivery Info:
+                        <div style="margin-top:6px;">
+                            <div>Phone 1: <b>@(string.IsNullOrWhiteSpace(o.Phone1) ? "—" : o.Phone1)</b></div>
+                            <div>Phone 2: <b>@(string.IsNullOrWhiteSpace(o.Phone2) ? "—" : o.Phone2)</b></div>
+                            <div>Address: <b>@(string.IsNullOrWhiteSpace(o.Address) ? "—" : o.Address)</b></div>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th width="90">Qty</th>
+                                <th width="120">Price</th>
+                                <th width="140">Line Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in o.Items)
+                            {
+                                var name = it.Product?.ProductName ?? "Item";
+                                var img = it.Product?.imgurl;
+
+                                <tr>
+                                    <td>
+                                        <div class="prod">
+                                            @if (!string.IsNullOrWhiteSpace(img))
+                                            {
+                                                <img src="@img" />
+                                            }
+                                            <div>@name</div>
+                                        </div>
+                                    </td>
+                                    <td>@it.Quantity</td>
+                                    <td>@it.Price.ToString("0.00") JD</td>
+                                    <td>@((it.Price * it.Quantity).ToString("0.00")) JD</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    </div>
+</div>
