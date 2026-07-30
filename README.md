@@ -137,6 +137,90 @@ Allows new students to create an account using their university email.
 
 ![Signin](Screenshots/Shared/signin.png)
 
+
+---
+
+---
+
+# 👤 Customer Screenshots
+
+
+---
+
+### Product Details
+
+<p align="center">
+  <img src="Screenshots/Customer/details-product.png" width="900">
+</p>
+
+---
+
+### Shopping Cart / Orders
+
+<p align="center">
+  <img src="Screenshots/Customer/cart.png" width="900">
+</p>
+---
+### Customer Dashboard
+
+<p align="center">
+  <img src="Screenshots/Customer/my-orders.png" width="900">
+</p>
+
+
+---
+
+# 🛍 Seller Screenshots
+
+### Seller Dashboard
+
+<p align="center">
+  <img src="Screenshots/Seller/orders-state.png" width="900">
+</p>
+
+---
+
+### Add Product
+
+<p align="center">
+  <img src="Screenshots/Seller/add-product.png" width="900">
+</p>
+
+---
+
+### Product Management
+
+<p align="center">
+  <img src="Screenshots/Seller/details.png" width="900">
+</p>
+
+
+---
+
+# 🛠 Admin Screenshots
+
+### Admin Dashboard
+
+<p align="center">
+  <img src="Screenshots/Admin/Dashboard.png" width="900">
+</p>
+
+---
+
+### Seller Requests Management
+
+<p align="center">
+  <img src="Screenshots/Admin/seller-requests.png" width="900">
+</p>
+
+---
+
+### User Management
+
+<p align="center">
+  <img src="Screenshots/Admin/admin-panel.png" width="900">
+</p>
+
 # 🔄 System Workflow
 
 1. A student creates an account.
