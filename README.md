@@ -297,8 +297,8 @@ The project follows the **Model–View–Controller (MVC)** architecture to ensu
 
 Before running the project, make sure you have the following installed:
 
-- Visual Studio 2022 (ASP.NET and Web Development workload)
-- .NET 8 SDK
+- Visual Studio 2026 (ASP.NET and Web Development workload)
+- .NET 10 SDK
 - SQL Server LocalDB or SQL Server Express
 - SQL Server Management Studio (SSMS) *(required only if using the provided database script)*
 - Git
@@ -327,7 +327,7 @@ Open the solution file:
 LINCA.sln
 ```
 
-using **Visual Studio 2022**.
+using **Visual Studio 2026**.
 
 Visual Studio will automatically restore the required NuGet packages.
 
@@ -358,6 +358,17 @@ This option creates a **new empty SQL Server database** using the Entity Framewo
 It is the recommended approach for developers who want to start with a fresh database.
 
 > **Note:** This option creates only the database structure (tables, relationships, constraints, etc.). Any sample data will not be available unless it is seeded by the application.
+
+## Database Connection Configuration
+
+Before running the project, make sure that the database connection string matches your local SQL Server configuration.
+
+The project uses the following connection string by default:
+
+```json
+"ConnectionStrings": {
+  "LincaPortal": "Server=(localdb)\\MSSQLLocalDB;Database=LincaDB9;Trusted_Connection=True;TrustServerCertificate=True"
+}
 
 ### Steps
 
