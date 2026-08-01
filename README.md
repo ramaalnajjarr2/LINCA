@@ -291,87 +291,231 @@ LINCA
 The project follows the **Model–View–Controller (MVC)** architecture to ensure clean code organization, maintainability, and scalability.
 
 ---
-
 # 🚀 How to Run the Project
 
-## Requirements
+## Prerequisites
 
-Before running the project, make sure you have:
+Before running the project, make sure you have the following installed:
 
-- Visual Studio 2026 (or Visual Studio 2022 with ASP.NET workload)
-- SQL Server
-- SQL Server Management Studio (optional)
-- .NET SDK
-- Git (optional)
+- Visual Studio 2022 (ASP.NET and Web Development workload)
+- .NET 8 SDK
+- SQL Server LocalDB or SQL Server Express
+- SQL Server Management Studio (SSMS) *(required only if using the provided database script)*
+- Git
 
 ---
 
-## Installation Steps
+## 1. Clone the Repository
 
-### 1. Clone the repository
+Open **Command Prompt (CMD)** or **Terminal** and run:
 
 ```bash
+cd Desktop
+
 git clone https://github.com/ramaalnajjarr2/LINCA.git
+
+cd LINCA
 ```
 
-Or download the project as a ZIP file from GitHub.
-
 ---
 
-### 2. Open the project
+## 2. Open the Project
 
-Open the `LINCA.sln` solution using Visual Studio.
+Open the solution file:
 
----
-
-### 3. Restore NuGet packages
-
-Visual Studio usually restores the required packages automatically.
-
-If not, restore them manually and wait until all dependencies are installed.
-
----
-
-### 4. Build the solution
-
-From the menu:
-
+```text
+LINCA.sln
 ```
+
+using **Visual Studio 2022**.
+
+Visual Studio will automatically restore the required NuGet packages.
+
+If the packages are not restored automatically, right-click the solution and select:
+
+```text
+Restore NuGet Packages
+```
+
+---
+
+## 3. Build the Project
+
+From the Visual Studio menu, click:
+
+```text
 Build → Rebuild Solution
 ```
 
+Wait until the build completes successfully before continuing.
+
 ---
 
-### 5. Create the database
+# Option 1 – Create a New Database Using Entity Framework Migrations (Recommended)
+
+This option creates a **new empty SQL Server database** using the Entity Framework Core migrations included in the project.
+
+It is the recommended approach for developers who want to start with a fresh database.
+
+> **Note:** This option creates only the database structure (tables, relationships, constraints, etc.). Any sample data will not be available unless it is seeded by the application.
+
+### Steps
 
 Open:
 
-```
-Tools → NuGet Package Manager → Package Manager Console
+```text
+Tools
+    → NuGet Package Manager
+        → Package Manager Console
 ```
 
 Run:
 
 ```powershell
-update-database
+Update-Database
 ```
 
-Entity Framework Core will automatically create the database using the configured migrations.
+Or using the .NET CLI:
+
+```bash
+dotnet ef database update
+```
+
+Entity Framework Core will automatically:
+
+- Create the SQL Server database.
+- Create all tables.
+- Apply all migrations.
+- Configure relationships and constraints.
+
+Once the command finishes successfully, simply run the project.
 
 ---
 
-### 6. Run the project
+# Option 2 – Use the Preconfigured Database (Recommended for Quick Testing)
+
+The repository includes a complete SQL Server database script with the project schema and sample data.
+
+This option is recommended if you want to explore the system immediately without manually creating test data.
+
+### Steps
+
+Open **SQL Server Management Studio (SSMS)**.
+
+Connect to:
+
+```text
+(localdb)\MSSQLLocalDB
+```
+
+or your SQL Server instance.
+
+---
+
+Right-click:
+
+```text
+Databases
+```
+
+Choose:
+
+```text
+New Database...
+```
+
+Create a database named exactly:
+
+```text
+LincaDB9
+```
+
+> **Important:** The database name must be **LincaDB9** because the default connection string in `appsettings.json` points to this database.
+
+After the database has been created:
+
+Right-click:
+
+```text
+LincaDB9
+```
+
+Choose:
+
+```text
+New Query
+```
+
+Open the following file from the repository:
+
+```text
+Database/LincaDB9.sql
+```
+
+Copy the entire script into the query window (or open the file directly in SSMS).
+
+Execute the script by clicking:
+
+```text
+Execute
+```
+
+or simply press:
+
+```text
+F5
+```
+
+Wait until the execution completes successfully.
+
+Refresh the **LincaDB9** database.
+
+You should now see all project tables together with the included sample data.
+
+---
+
+## 4. Verify the Connection String
+
+Open:
+
+```text
+appsettings.json
+```
+
+Make sure the connection string matches your database.
+
+Example:
+
+```json
+"ConnectionStrings": {
+  "LincaPortal": "Server=(localdb)\\MSSQLLocalDB;Database=LincaDB9;Trusted_Connection=True;TrustServerCertificate=True"
+}
+```
+
+If you created the database using a different name or SQL Server instance, update the connection string accordingly.
+
+---
+
+## 5. Run the Application
 
 Press:
 
-```
+```text
 F5
+```
+
+or
+
+```text
+Ctrl + F5
 ```
 
 or click:
 
-```
+```text
 Start Debugging
 ```
 
-The application will open automatically in your browser.
+The application will launch automatically in your default web browser.
+
+Enjoy exploring LINCA! 🎉
