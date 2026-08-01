@@ -530,3 +530,9 @@ Start Debugging
 The application will launch automatically in your default web browser.
 
 Enjoy exploring LINCA! 🎉
+
+## 📄 Project Documentation
+
+For more details about the project design, requirements, and implementation, please check the full documentation:
+
+[View Project Documentation](Documentation/LINCA-report.pdf)
